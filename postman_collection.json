@@ -1,0 +1,287 @@
+{
+  "info": {
+    "name": "Assignment 5 API - Express + Prisma",
+    "description": "Users, Posts, and Comments APIs built with Express and Prisma (PostgreSQL).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Signup - Create user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@gmail.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "signup"]
+            },
+            "description": "A-1: Create a new user. Validates name (>2), email format, password (>6), and email must not already exist."
+          }
+        },
+        {
+          "name": "Create or update user",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@gmail.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            },
+            "description": "A-2: Create or update a user based on primary key (upsert) skipping validation."
+          }
+        },
+        {
+          "name": "Find user by email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/by-email?email=john@gmail.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "by-email"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "john@gmail.com"
+                }
+              ]
+            },
+            "description": "A-3: Find a user by their email address."
+          }
+        },
+        {
+          "name": "Get user by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "1"]
+            },
+            "description": "A-4: Retrieve a user by primary key, excluding the role field from the response."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Create post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"First Post\",\n  \"content\": \"This is the content of the first post.\",\n  \"userId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            },
+            "description": "B-1: Create a new post. Post data comes from the body."
+          }
+        },
+        {
+          "name": "Delete post (owner only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "1"]
+            },
+            "description": "B-2: Delete a post by id (soft delete). Only the owner can delete it."
+          }
+        },
+        {
+          "name": "Posts with user and comments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/details",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "details"]
+            },
+            "description": "B-3: All posts including the user (id, name) and comments (id, content)."
+          }
+        },
+        {
+          "name": "Posts with comment count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/comment-count",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "comment-count"]
+            },
+            "description": "B-4: All posts with the number of comments on each post."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Create bulk comments",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comments\": [\n    { \"content\": \"This is the first comment.\", \"postId\": 1, \"userId\": 1 },\n    { \"content\": \"Amazing post!\", \"postId\": 1, \"userId\": 1 },\n    { \"content\": \"Thanks for sharing.\", \"postId\": 1, \"userId\": 1 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments"]
+            },
+            "description": "C-1: Create a bulk of comments."
+          }
+        },
+        {
+          "name": "Update comment (owner only)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+            "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1,\n  \"content\": \"updated content\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "1"]
+            },
+            "description": "C-2: Update comment content by id. Only the comment owner can update it (userId in body)."
+          }
+        },
+        {
+          "name": "Find or create comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postId\": 1,\n  \"userId\": 1,\n  \"content\": \"This is a sample comment\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/comments/find-or-create",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "find-or-create"]
+            },
+            "description": "C-3: Find a comment by post, user, and content. Returns it if it exists, otherwise creates it."
+          }
+        },
+        {
+          "name": "Search comments by word",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/comments/search?word=the",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "search"],
+              "query": [
+                {
+                  "key": "word",
+                  "value": "the"
+                }
+              ]
+            },
+            "description": "C-4: All comments containing a specific word, with the matched count."
+          }
+        },
+        {
+          "name": "Newest 3 comments for post",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/comments/newest/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "newest", "1"]
+            },
+            "description": "C-5: The 3 most recent comments of a post ordered by creation date."
+          }
+        },
+        {
+          "name": "Comment details by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/comments/details/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["comments", "details", "1"]
+            },
+            "description": "C-6: Get a comment by primary key including user and post information."
+          }
+        }
+      ]
+    }
+  ]
+}
